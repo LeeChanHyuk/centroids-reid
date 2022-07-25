@@ -182,7 +182,7 @@ class CTLModel(ModelBase):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CLT Model Training")
     parser.add_argument(
-        "--config_file", default="", help="path to config file", type=str
+        "--config_file", default="configs/256_resnet50.yml", help="path to config file", type=str
     )
     parser.add_argument(
         "opts",
