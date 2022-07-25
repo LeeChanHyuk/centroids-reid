@@ -8,6 +8,7 @@ Adapted and extended by:
 @author: mikwieczorek
 """
 
+import os
 import glob
 import os.path as osp
 import re
@@ -36,10 +37,11 @@ class Market1501(ReidBaseDataModule):
 
     Version that will not supply resampled instances
     """
-    dataset_dir = 'market1501'
+    dataset_dir = 'data/market1501'
 
     def __init__(self, cfg, **kwargs):
         super().__init__(cfg, **kwargs)
+        cfg.DATASETS.ROOT_DIR = os.path.dirname((os.path.dirname(os.path.realpath(__file__))))
         self.dataset_dir = osp.join(cfg.DATASETS.ROOT_DIR, self.dataset_dir)
         self.train_dir = osp.join(self.dataset_dir, 'bounding_box_train')
         self.query_dir = osp.join(self.dataset_dir, 'query')
@@ -49,11 +51,11 @@ class Market1501(ReidBaseDataModule):
         self._check_before_run()
         transforms_base = ReidTransforms(self.cfg)
         
-        train, train_dict = self._process_dir(self.train_dir, relabel=True)
+        train, train_dict = self._process_dir(self.train_dir, relabel=True) # (path, PID, CAM ID, idx(of paths))
         self.train_dict = train_dict
         self.train_list = train
         self.train = BaseDatasetLabelledPerPid(train_dict, transforms_base.build_transforms(is_train=True), self.num_instances, self.cfg.DATALOADER.USE_RESAMPLING)
-
+        # self.train is sorted by PID. (Persion 1 - paths, ids, idxs ...)
         query, query_dict = self._process_dir(self.query_dir, relabel=False)
         gallery, gallery_dict  = self._process_dir(self.gallery_dir, relabel=False)
         self.query_list = query
@@ -71,7 +73,7 @@ class Market1501(ReidBaseDataModule):
         img_paths = glob.glob(osp.join(dir_path, '*.jpg'))
         pattern = re.compile(r'([-\d]+)_c(\d)')
 
-        pid_container = set()
+        pid_container = set() # PersonId container
         for img_path in img_paths:
             pid, _ = map(int, pattern.search(img_path).groups())
             if pid == -1: continue  # junk images are just ignored
@@ -87,7 +89,7 @@ class Market1501(ReidBaseDataModule):
             assert 0 <= pid <= 1501  # pid == 0 means background
             assert 1 <= camid <= 6
             camid -= 1  # index starts from 0
-            if relabel: pid = pid2label[pid]
+            if relabel: pid = pid2label[pid] # Change personID from dataset to 0~750
             dataset.append((img_path, pid, camid, idx))
             dataset_dict[pid].append((img_path, pid, camid, idx))
 
