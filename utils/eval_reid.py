@@ -46,7 +46,7 @@ def eval_func(
         q_pid = q_pids[q_idx]
         q_camid = q_camids[q_idx]
 
-        # remove gallery samples that have the same pid and camid with query
+        # remove gallery samples that have the same pid and camid with query # 다른 캠에서 촬영된 영상을 매칭하는 task니까.
         order = indices[q_idx]
         if respect_camids:
             remove = [

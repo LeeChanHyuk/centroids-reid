@@ -97,7 +97,7 @@ def run_single(cfg, method, logger_save_dir):
     )
     dm.setup()
     test_dataloader = None
-
+    print(cfg.SOLVER.EVAL_PERIOD)
     trainer = pl.Trainer(
         gpus=cfg.GPU_IDS,
         max_epochs=cfg.SOLVER.MAX_EPOCHS,

@@ -113,7 +113,7 @@ def _inference(model, batch, use_cuda, normalize_with_bn=True):
         return global_feat, filename
 
 
-def run_inference(model, val_loader, cfg, print_freq, use_cuda):
+def run_inference(model, val_loader, cfg, print_freq, use_cuda = True):
     embeddings = []
     paths = []
     model = model.cuda() if use_cuda else model

@@ -108,14 +108,14 @@ class ReidBaseDataModule(pl.LightningDataModule):
         sampler = get_sampler(
             sampler_name,
             data_source=self.train_dict,
-            batch_size=self.cfg.SOLVER.IMS_PER_BATCH,
+            batch_size=int(self.cfg.SOLVER.IMS_PER_BATCH*2),
             num_instances=self.num_instances,
             world_size=world_size,
             rank=rank,
         )
         return DataLoader(
             self.train,
-            self.cfg.SOLVER.IMS_PER_BATCH,
+            int(self.cfg.SOLVER.IMS_PER_BATCH*2),
             num_workers=self.num_workers,
             shuffle=False,
             sampler=sampler,
@@ -359,7 +359,7 @@ class BaseDatasetLabelledPerPid(Dataset):
         _len = len(list_of_samples)
         assert (
             _len > 1
-        ), f"len of samples for pid: {pid} is <=1. len: {len_}, samples: {list_of_samples}"
+        ), f"len of samples for pid: {pid} is <=1. len: {_len}, samples: {list_of_samples}"
 
         if _len < self.num_instances:
             choice_size = _len

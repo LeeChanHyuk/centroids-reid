@@ -48,8 +48,8 @@ class Market1501(ReidBaseDataModule):
         self.gallery_dir = osp.join(self.dataset_dir, 'bounding_box_test')
 
     def setup(self):
-        self._check_before_run()
-        transforms_base = ReidTransforms(self.cfg)
+        self._check_before_run() # check the data directory
+        transforms_base = ReidTransforms(self.cfg) # Data augmentation
         
         train, train_dict = self._process_dir(self.train_dir, relabel=True) # (path, PID, CAM ID, idx(of paths))
         self.train_dict = train_dict
@@ -86,7 +86,7 @@ class Market1501(ReidBaseDataModule):
         for idx, img_path in enumerate(img_paths):
             pid, camid = map(int, pattern.search(img_path).groups())
             if pid == -1: continue  # junk images are just ignored
-            assert 0 <= pid <= 1501  # pid == 0 means background
+            #assert 0 <= pid <= 1501  # pid == 0 means background
             assert 1 <= camid <= 6
             camid -= 1  # index starts from 0
             if relabel: pid = pid2label[pid] # Change personID from dataset to 0~750

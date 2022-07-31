@@ -12,11 +12,11 @@ Additional flag can be set `--images-in-subfolders` – only images in subfolder
 python inference/create_embeddings.py \
 --config_file="configs/256_resnet50.yml" \
 GPU_IDS [0] \
-DATASETS.ROOT_DIR '/data/my-image-dataset/' \
+DATASETS.ROOT_DIR 'data/market1501/query/' \
 TEST.IMS_PER_BATCH 128 \
-OUTPUT_DIR 'output-dir' \
+OUTPUT_DIR 'data/market1501/output' \
 TEST.ONLY_TEST True \
-MODEL.PRETRAIN_PATH "logs/market1501/256_resnet50/train_ctl_model/version_0/checkpoints/epoch=119.ckpt"
+MODEL.PRETRAIN_PATH "logs/market1501/train_ctl_model/version_50/checkpoints/epoch=119.ckpt"
 ```
 
 ## Running similarity serach
@@ -26,15 +26,15 @@ Additional flag can be set `--images-in-subfolders` – only images in subfolder
 
 ```bash
 python inference/get_similar.py \
---config_file="configs/320_resnet50_ibn_a.yml" \
---gallery_data='output-dir' \
+--config_file="configs/256_resnet50.yml" \
+--gallery_data='data/market1501/output' \
 --normalize_features \
 --topk=100 \
 GPU_IDS [0] \
-DATASETS.ROOT_DIR '/data/query-images/'  \
+DATASETS.ROOT_DIR 'data/market1501/query'  \
 TEST.IMS_PER_BATCH 128 \
-OUTPUT_DIR 'output-dir' \
+OUTPUT_DIR 'data/market1501/similarity' \
 TEST.ONLY_TEST True \
-MODEL.PRETRAIN_PATH "logs/market1501/256_resnet50/train_ctl_model/version_0/checkpoints/epoch=119.ckpt" \
+MODEL.PRETRAIN_PATH "logs/market1501/train_ctl_model/version_50/checkpoints/epoch=119.ckpt" \
 SOLVER.DISTANCE_FUNC 'cosine'
 ```

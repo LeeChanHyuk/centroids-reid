@@ -30,7 +30,7 @@ if __name__ == "__main__":
         description="Create embeddings for images that will serve as the database (gallery)"
     )
     parser.add_argument(
-        "--config_file", default="", help="path to config file", type=str
+        "--config_file", default="configs/256_resnet50.yml", help="path to config file", type=str
     )
     parser.add_argument(
         "--images-in-subfolders",
@@ -47,6 +47,7 @@ if __name__ == "__main__":
         "--gallery_data",
         help="path to root where previously prepared embeddings and paths were saved",
         type=str,
+        default=''
     )
     parser.add_argument(
         "--normalize_features",
@@ -133,5 +134,5 @@ if __name__ == "__main__":
 
     log.info(f"Saving results to {str(SAVE_DIR)}")
     np.save(SAVE_DIR / "results.npy", out)
-    np.save(SAVE_DIR / "query_embeddings.npy", embeddings)
+    np.save(SAVE_DIR / "query_embeddings.npy", embeddings.cpu())
     np.save(SAVE_DIR / "query_paths.npy", paths)

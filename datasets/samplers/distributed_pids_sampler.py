@@ -59,13 +59,25 @@ class RandomIdentitySampler(Sampler):
         final_idxs = []
 
         while len(avai_pids) >= self.num_pids_per_batch * self.world_size:
-            selected_pids = random.sample(avai_pids, self.num_pids_per_batch * self.world_size)
+            success = 1
+            while success:
+                little_success = 1
+                selected_pids = random.sample(avai_pids, self.num_pids_per_batch * self.world_size)
+                for i in selected_pids:
+                    if len(batch_idxs_dict[i]) == 0:
+                        little_success = 0
+                if little_success == 0:
+                    continue
+                else:
+                    success = 0
             for pid in selected_pids:
                 batch_idxs = batch_idxs_dict[pid].pop(0)
                 final_idxs.append(batch_idxs)
                 if len(batch_idxs_dict[pid]) == 0:
                     avai_pids.remove(pid)
-
+        if len(final_idxs) % (self.batch_size * self.world_size):
+            for i in range(len(final_idxs) % (self.batch_size * self.world_size)):
+                final_idxs.pop(0)
         assert len(final_idxs) % (self.batch_size * self.world_size) == 0, f"Number of elements in the sampler indices {len(final_idxs)} must be divisible by the batch_size {self.batch_size * self.world_size}, but it is not!"
 
         final_idxs = list(np.array_split(final_idxs, self.world_size)[self.rank])
